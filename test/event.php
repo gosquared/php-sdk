@@ -14,7 +14,7 @@ $event_data = array(
   'twitter' => '@TheDeveloper'
 );
 
-$result = gosquared_event($event_data);
+$result = gosquared_event('signup', $event_data);
 if(!$result){
   gosquared_debug("Event failed", E_USER_WARNING);
 }

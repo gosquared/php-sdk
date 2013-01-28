@@ -10,6 +10,7 @@ if(!defined('GOSQUARED_DEBUG')){
 
 function gosquared_debug($message, $level = E_USER_NOTICE){
   if(!GOSQUARED_DEBUG) return false;
+  $message = "[GoSquared]: $message";
   trigger_error($message, $level);
 }
 
@@ -49,8 +50,12 @@ function validate_event_response($body){
   return true;
 }
 
-function gosquared_event($event_params){
-  $url = gosquared_generate_url(GOSQUARED_EVENT_ROUTE, $event_params);
+function gosquared_event($name, $params){
+  if(!$name || !is_string($name)){
+    gosquared_debug('Events must have a name', E_USER_WARNING);
+    return false;
+  }
+  $url = gosquared_generate_url(GOSQUARED_EVENT_ROUTE, $params);
   $res = gosquared_exec($url);
   gosquared_debug($res, E_USER_NOTICE);
   if(!validate_event_response($res)) return false;
