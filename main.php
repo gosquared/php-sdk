@@ -7,6 +7,7 @@ define('GOSQUARED_PAGEVIEW_ROUTE', '/pageview');
 if(!defined('GOSQUARED_DEBUG')){
   define('GOSQUARED_DEBUG', false);
 }
+define('GOSQUARED_CURL', extension_loaded('curl'));
 
 function gosquared_debug($message, $level = E_USER_NOTICE){
   if(!GOSQUARED_DEBUG) return false;
@@ -15,6 +16,10 @@ function gosquared_debug($message, $level = E_USER_NOTICE){
 }
 
 function gosquared_exec($url){
+  if(!GOSQUARED_CURL){
+    gosquared_debug('cURL is required for the GoSquared SDK. See http://uk3.php.net/manual/en/book.curl.php for more info.');
+    return false;
+  }
   $c = curl_init();
 
   gosquared_debug($url, E_USER_NOTICE);
@@ -26,7 +31,7 @@ function gosquared_exec($url){
   $error_message = curl_error($c);
 
   if($error_number){
-    gosquared_debug("[GoSquared][WARN]: cURL encountered error. Code: $error_number. Message: $error_message", E_USER_WARNING);
+    gosquared_debug("cURL encountered error. Code: $error_number. Message: $error_message", E_USER_WARNING);
     return false;
   }
 
@@ -57,7 +62,6 @@ function gosquared_event($name, $params){
   }
   $url = gosquared_generate_url(GOSQUARED_EVENT_ROUTE, $params);
   $res = gosquared_exec($url);
-  gosquared_debug($res, E_USER_NOTICE);
   if(!validate_event_response($res)) return false;
   return $res;
 }

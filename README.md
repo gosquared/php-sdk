@@ -14,3 +14,7 @@ if(!$result){
   gosquared_debug("Event failed", E_USER_WARNING);
 }
 ````
+
+### Requirements
+* PHP >= 5.2.0
+* cURL
