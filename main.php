@@ -57,16 +57,22 @@ function validate_event_response($body){
 
 /**
  * Trigger an event
- * @param  string $name     Readable string, such as "New Signup" or event ID such as 'new_signup'
- * @param  array  $params   Any additional data to persist with the event. Keys can be anything except _name which is reserved and overwritten with value in $name
- * @return mixed            Decoded JSON response object, or false on failure.
+ * @param  string $site_token Token 
+ * @param  string $name       Readable string, such as "New Signup" or event ID such as 'new_signup'
+ * @param  array  $params     Any additional data to persist with the event. Keys can be anything except _name and a, which are reserved
+ * @return mixed              Decoded JSON response object, or false on failure.
  */
-function gosquared_event($name, $params = array()){
+function gosquared_event($site_token, $name, $params = array()){
+  if(!$site_token || !is_string($site_token)){
+    gosquared_debug('Site token is not specified or invalid', E_USER_WARNING);
+    return false;
+  }
   if(!$name || !is_string($name)){
     gosquared_debug('Events must have a name', E_USER_WARNING);
     return false;
   }
   $params['_name'] = $name;
+  $params['a'] = $site_token;
   $url = gosquared_generate_url(GOSQUARED_EVENT_ROUTE, $params);
   $res = gosquared_exec($url);
   if(!validate_event_response($res)) return false;
