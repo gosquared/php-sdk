@@ -55,11 +55,18 @@ function validate_event_response($body){
   return true;
 }
 
-function gosquared_event($name, $params){
+/**
+ * Trigger an event
+ * @param  string $name     Readable string, such as "New Signup" or event ID such as 'new_signup'
+ * @param  array  $params   Any additional data to persist with the event. Keys can be anything except _name which is reserved and overwritten with value in $name
+ * @return mixed            Decoded JSON response object, or false on failure.
+ */
+function gosquared_event($name, $params = array()){
   if(!$name || !is_string($name)){
     gosquared_debug('Events must have a name', E_USER_WARNING);
     return false;
   }
+  $params['_name'] = $name;
   $url = gosquared_generate_url(GOSQUARED_EVENT_ROUTE, $params);
   $res = gosquared_exec($url);
   if(!validate_event_response($res)) return false;
