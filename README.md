@@ -1,0 +1,2 @@
+## GoSquared PHP SDK
+
