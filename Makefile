@@ -1,0 +1,6 @@
+SITE_TOKEN ?= GSN-181546-E
+
+test:
+	SITE_TOKEN=$(SITE_TOKEN) test/*
+
+.PHONY: test

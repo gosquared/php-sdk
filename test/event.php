@@ -14,13 +14,14 @@ $event_data = array(
   'twitter' => '@TheDeveloper'
 );
 
-$result = gosquared_event(SITE_TOKEN, 'Test Event', $event_data);
+$GS = new GoSquared(SITE_TOKEN);
+$result = $GS->store_event('Test Event', $event_data);
 if(!$result){
-  gosquared_debug("Event failed", E_USER_WARNING);
+  $GS->debug("Event failed", E_USER_WARNING);
 }
 
-$result = gosquared_event(SITE_TOKEN, 'Test Event');
+$result = $GS->store_event('Test Event');
 if(!$result){
-  gosquared_debug("Event failed", E_USER_WARNING);
+  $GS->debug("Event failed", E_USER_WARNING);
 }
 ?>
