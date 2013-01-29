@@ -46,3 +46,12 @@ make test
 ```
 	
 To test on a site, you can prefix this command with a SITE_TOKEN environment variable, which should be a valid token for a site registered with GoSquared.
+
+### Debugging
+To switch on debug logs, place the following define statement before including this library:
+
+```php
+define('GOSQUARED_DEBUG', true);
+```
+
+Debug output will then be sent to the standard ouput streams. Common places to find the output are your console (if run with CLI), or your web server's logs.

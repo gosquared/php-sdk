@@ -1,11 +1,21 @@
 <?php
 
+/**
+ * GoSquared PHP SDK.
+ * 
+ * Created: Jan 2013
+ * Version: 0.0.3
+ */
+
 define('GOSQUARED_TRANSPORT_PROTOCOL', 'https');
 define('GOSQUARED_HOST', 'data.gosquared.com');
 define('GOSQUARED_EVENT_ROUTE', '/event');
 define('GOSQUARED_PAGEVIEW_ROUTE', '/pageview');
 if(!defined('GOSQUARED_DEBUG')){
   define('GOSQUARED_DEBUG', false);
+}
+if(!defined('GOSQUARED_CURL_TIMEOUT')){
+  define('GOSQUARED_CURL_TIMEOUT', 2);
 }
 define('GOSQUARED_CURL', extension_loaded('curl'));
 
@@ -36,6 +46,7 @@ class GoSquared{
     $this->debug($url, E_USER_NOTICE);
     curl_setopt($c, CURLOPT_URL, $url);
     curl_setopt($c, CURLOPT_RETURNTRANSFER, true);
+    curl_setopt($c, CURLOPT_TIMEOUT, GOSQUARED_CURL_TIMEOUT);
     
     $response = curl_exec($c);
     $error_number = curl_errno($c);
