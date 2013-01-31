@@ -4,7 +4,7 @@
  * GoSquared PHP SDK.
  * 
  * Created: Jan 2013
- * Version: 0.0.3
+ * Version: 0.0.4
  */
 
 define('GOSQUARED_TRANSPORT_PROTOCOL', 'https');
