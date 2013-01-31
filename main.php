@@ -36,7 +36,7 @@ class GoSquared{
     trigger_error($message, $level);
   }
 
-  function exec($url){
+  function exec($url, $params = false){
     if(!GOSQUARED_CURL){
       $this->debug('cURL is required for the GoSquared SDK. See http://uk3.php.net/manual/en/book.curl.php for more info.');
       return false;
@@ -46,6 +46,10 @@ class GoSquared{
     $this->debug($url, E_USER_NOTICE);
     curl_setopt($c, CURLOPT_URL, $url);
     curl_setopt($c, CURLOPT_RETURNTRANSFER, true);
+    if($params){
+      curl_setopt($c, CURLOPT_POSTFIELDS, $params);
+      curl_setopt($c, CURLOPT_HTTPHEADER, array('Content-type: application/json', 'Content-length: ' . strlen($params)));
+    }
     curl_setopt($c, CURLOPT_TIMEOUT, GOSQUARED_CURL_TIMEOUT);
     
     $response = curl_exec($c);
@@ -88,10 +92,16 @@ class GoSquared{
       $this->debug('Events must have a name', E_USER_WARNING);
       return false;
     }
-    $params['_name'] = $name;
-    $params['a'] = $this->site_token;
-    $url = $this->generate_url(GOSQUARED_EVENT_ROUTE, $params);
-    $res = $this->exec($url);
+
+    if($params && !is_string($params)){
+      $params = json_encode($params);
+    }
+
+    $query_params = array();
+    $query_params['name'] = $name;
+    $query_params['site_token'] = $this->site_token;
+    $url = $this->generate_url(GOSQUARED_EVENT_ROUTE, $query_params);
+    $res = $this->exec($url, $params);
     if(!$this->validate_response($res)) return false;
     return $res;
   }
