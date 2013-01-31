@@ -36,7 +36,7 @@ class GoSquared{
     trigger_error($message, $level);
   }
 
-  function exec($url, $post_body = false){
+  function exec($url, $params = false){
     if(!GOSQUARED_CURL){
       $this->debug('cURL is required for the GoSquared SDK. See http://uk3.php.net/manual/en/book.curl.php for more info.');
       return false;
@@ -46,9 +46,9 @@ class GoSquared{
     $this->debug($url, E_USER_NOTICE);
     curl_setopt($c, CURLOPT_URL, $url);
     curl_setopt($c, CURLOPT_RETURNTRANSFER, true);
-    if($post_body){
-      curl_setopt($c, CURLOPT_POSTFIELDS, $post_body);
-      curl_setopt($c, CURLOPT_HTTPHEADER, array('Content-type: application/json', 'Content-length: ' . strlen($post_body)));
+    if($params){
+      curl_setopt($c, CURLOPT_POSTFIELDS, $params);
+      curl_setopt($c, CURLOPT_HTTPHEADER, array('Content-type: application/json', 'Content-length: ' . strlen($params)));
     }
     curl_setopt($c, CURLOPT_TIMEOUT, GOSQUARED_CURL_TIMEOUT);
     
@@ -92,16 +92,16 @@ class GoSquared{
       $this->debug('Events must have a name', E_USER_WARNING);
       return false;
     }
-    $post_body = $params;
-    if($post_body && !is_string($post_body)){
-      $post_body = json_encode($post_body);
+
+    if($params && !is_string($params)){
+      $params = json_encode($params);
     }
 
     $query_params = array();
     $query_params['name'] = $name;
     $query_params['site_token'] = $this->site_token;
     $url = $this->generate_url(GOSQUARED_EVENT_ROUTE, $query_params);
-    $res = $this->exec($url, $post_body);
+    $res = $this->exec($url, $params);
     if(!$this->validate_response($res)) return false;
     return $res;
   }
