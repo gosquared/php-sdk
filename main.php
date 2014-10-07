@@ -15,7 +15,7 @@ if(!defined('GOSQUARED_DEBUG')){
   define('GOSQUARED_DEBUG', false);
 }
 if(!defined('GOSQUARED_CURL_TIMEOUT')){
-  define('GOSQUARED_CURL_TIMEOUT', 2);
+  define('GOSQUARED_CURL_TIMEOUT', 10);
 }
 define('GOSQUARED_CURL', extension_loaded('curl'));
 
@@ -45,10 +45,12 @@ class GoSquared{
     }
     $c = curl_init();
 
-    $this->debug($url, E_USER_NOTICE);
+    $this->debug('Requesting ' . $url, E_USER_NOTICE);
     curl_setopt($c, CURLOPT_URL, $url);
     curl_setopt($c, CURLOPT_RETURNTRANSFER, true);
     if($body){
+      $body = json_encode($body);
+      $this->debug($body, E_USER_NOTICE);
       curl_setopt($c, CURLOPT_POSTFIELDS, $body);
       curl_setopt($c, CURLOPT_HTTPHEADER, array('Content-type: application/json', 'Content-length: ' . strlen($body)));
     }
@@ -96,10 +98,6 @@ class GoSquared{
     if(!$name || !is_string($name)){
       $this->debug('Events must have a name', E_USER_WARNING);
       return false;
-    }
-
-    if($params && !is_string($params)){
-      $params = json_encode($params);
     }
 
     $query_params = array();

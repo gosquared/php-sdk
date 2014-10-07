@@ -9,18 +9,23 @@ define('GOSQUARED_DEBUG', true);
 define('SITE_TOKEN', getenv('SITE_TOKEN'));
 require(__DIR__ . '/../main.php');
 
-$event_data = array(
-  'user' => 'Geffro Wagliatelli',
-  'twitter' => '@TheDeveloper'
-);
-
 $GS = new GoSquared(SITE_TOKEN);
-$result = $GS->store_event('Test Event', $event_data);
+$result = $GS->track_event('Test Event', array(
+  'custom' => 'properties',
+  'here' => true
+));
+
 if(!$result){
   $GS->debug("Event failed", E_USER_WARNING);
 }
 
-$result = $GS->store_event('Test Event');
+$result = $GS->track_event('Test Event');
+if(!$result){
+  $GS->debug("Event failed", E_USER_WARNING);
+}
+
+$person = $GS->create_person(1);
+$result = $person->track_event('Test Event');
 if(!$result){
   $GS->debug("Event failed", E_USER_WARNING);
 }

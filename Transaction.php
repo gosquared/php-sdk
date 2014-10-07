@@ -36,7 +36,7 @@ class GoSquaredTransaction{
    * @param  array   $items     Array of items containing details about the item - name, revenue, quantity etc
    */
   function add_items($items){
-    foreach($items as $$item){
+    foreach($items as $item){
       $this->add_item($item);
     }
   }

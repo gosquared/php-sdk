@@ -23,7 +23,7 @@ class GoSquaredPerson{
    * @return mixed              Decoded JSON response object, or false on failure.
    */
   function track_event($name, $params = array()){
-    return $this->GS->store_event($name, $params, $this->id);
+    return $this->GS->track_event($name, $params, $this->id);
   }
 
   /**
@@ -48,10 +48,6 @@ class GoSquaredPerson{
    * @return mixed              Decoded JSON response object, or false on failure.
    */
   function identify($id, $params = array()){
-    if($params && !is_string($params)){
-      $params = json_encode($params);
-    }
-
     $oldID = $this->id;
     $this->id = $id;
 
@@ -61,13 +57,11 @@ class GoSquaredPerson{
   /**
    * Alias two people together by their IDs
    * https://beta.gosquared.com/docs/tracking/api/#alias
-   * @param  string $id         The new PersonID/UserID
+   * @param  string $id         The PersonID/UserID to alias to this personID
    * @return mixed              Decoded JSON response object, or false on failure.
    */
   function create_alias($id){
-    $oldID = $this->id;
-    $this->id = $id;
-    return $this->GS->exec('/people/' . $oldID . '/alias/' . $id);
+    return $this->GS->exec('/people/' . $this->id . '/alias/' . $id);
   }
 
   /**
@@ -77,10 +71,6 @@ class GoSquaredPerson{
    * @return mixed              Decoded JSON response object, or false on failure.
    */
   function set_properties($params){
-    if($params && !is_string($params)){
-      $params = json_encode($params);
-    }
-
     return $this->GS->exec('/people/' . $this->id . '/properties', array(), $params);
   }
 
