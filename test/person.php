@@ -9,7 +9,10 @@ define('GOSQUARED_DEBUG', true);
 define('SITE_TOKEN', getenv('SITE_TOKEN'));
 require(__DIR__ . '/../main.php');
 
-$GS = new GoSquared(SITE_TOKEN);
+$GS = new GoSquared(array(
+  'site_token' => SITE_TOKEN,
+  'tracking_key' => '12345'
+));
 
 $person = $GS->Person('PersonID');
 

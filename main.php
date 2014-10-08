@@ -22,12 +22,19 @@ define('GOSQUARED_CURL', extension_loaded('curl'));
 class GoSquared{
   public $site_token;
 
-  function __construct($site_token){
-    if(!$site_token || !is_string($site_token)){
+  function __construct($opts){
+    if($opts && is_string($opts)) {
+      $opts = array(
+        'site_token' => $opts
+      );
+    }
+
+    if(!$opts || !$opts['site_token'] || !is_string($opts['site_token'])){
       $this->debug('Site token is not specified or invalid', E_USER_WARNING);
       return false;
     }
-    $this->site_token = $site_token;
+    $this->opts = $opts;
+    $this->site_token = $opts['site_token'];
   }
 
   function debug($message, $level = E_USER_NOTICE){
@@ -36,8 +43,8 @@ class GoSquared{
     trigger_error($message, $level);
   }
 
-  function exec($path, $params = array(), $body = false){
-    $url = $this->generate_url($path, $params);
+  function exec($path, $params = array(), $body = false, $person = false){
+    $url = $this->generate_url($path, $params, $person ? $person->get_params() : false);
 
     if(!GOSQUARED_CURL){
       $this->debug('cURL is required for the GoSquared SDK. See http://php.net/manual/en/book.curl.php for more info.');
@@ -70,12 +77,15 @@ class GoSquared{
     return $response;
   }
 
-  function generate_url($route, $params = array()){
-    return
-      'https://data.gosquared.com/' .
+  function generate_url($route, $params = array(), $personParams = false){
+    $url = 'https://data.gosquared.com/' .
       $this->site_token . '/v1' .
       $route . '?' .
       http_build_query($params);
+
+    if ($personParams) $url .= http_build_query($personParams);
+    return $url;
+
   }
 
   function validate_response($body){
@@ -94,7 +104,7 @@ class GoSquared{
    * @param  array  $params     Any additional data to persist with the event
    * @return mixed              Decoded JSON response object, or false on failure.
    */
-  function track_event($name, $params = array(), $personID = false){
+  function track_event($name, $params = array(), $person = false){
     if(!$name || !is_string($name)){
       $this->debug('Events must have a name', E_USER_WARNING);
       return false;
@@ -102,8 +112,8 @@ class GoSquared{
 
     $query_params = array();
     $query_params['name'] = $name;
-    if ($personID) $query_params['personID'] = $personID;
-    return $this->exec('/event', $query_params, $params);
+
+    return $this->exec('/event', $query_params, $params, $person);
   }
 
   /**

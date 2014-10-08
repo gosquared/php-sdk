@@ -6,8 +6,10 @@ Full documentation for this SDK can be found at https://beta.gosquared.com/docs/
 ```php
 require_once('gosquared-php-sdk/main.php');
 
-$site_token = 'GSN-181546-E';
-$GS = new GoSquared($site_token);
+$opts = array(
+  'site_token' => 'GSN-123456-A'
+);
+$GS = new GoSquared($opts);
 $result = $GS->track_event('Event Name');
 ```
 

@@ -8,12 +8,12 @@
 class GoSquaredTransaction{
   public $id;
 
-  function __construct($GS, $id, $opts = array(), $personID = false){
+  function __construct($GS, $id, $opts = array(), $person = false){
     $this->GS = $GS;
     $this->id = $id;
     $this->items = array();
     $this->opts = $opts;
-    $this->personID = $personID;
+    $this->person = $person;
   }
 
   /**
@@ -46,16 +46,12 @@ class GoSquaredTransaction{
    * @return mixed              Decoded JSON response object, or false on failure.
    */
   function track(){
-
-    $query_params = array();
-    if ($this->personID) $query_params['personID'] = $this->personID;
-
     $body = array();
     $body['id'] = $this->id;
     $body['items'] = $this->items;
     $body['opts'] = $this->opts;
 
-    return $this->GS->exec('/transaction', $query_params, $body);
+    return $this->GS->exec('/transaction', array(), $body, $this->person);
   }
 }
 
