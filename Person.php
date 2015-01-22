@@ -21,20 +21,6 @@ class GoSquaredPerson{
    */
   function set_id($id){
     $this->id = $id;
-    $tracking_key = isset($this->GS->opts['tracking_key']) ? $this->GS->opts['tracking_key'] : false;
-    $this->auth = $tracking_key ? hash_hmac('sha256', $id, $tracking_key) : false;
-  }
-
-  /**
-   * Get query string params for personID and authentication
-   * @return array              Array of parameters for use
-   */
-  function get_params(){
-    $p = array(
-      'personID' => $this->id
-    );
-    if ($this->auth) $p['auth'] = $this->auth;
-    return $p;
   }
 
   /**
@@ -66,18 +52,24 @@ class GoSquaredPerson{
    * Set properties and an alias on a person
    * https://beta.gosquared.com/docs/tracking/api/#identify
    * @param  string $id         The new PersonID/UserID
-   * @param  array  $params     Properties to be set on this person
+   * @param  array  $props      Properties to be set on this person
    * @return mixed              Decoded JSON response object, or false on failure.
    */
-  function identify($id, $params = array()){
+  function identify($id, $props = array()){
 
-    // allow usage as if it's the set_properties function
     if (is_array($id)) {
       return $this->set_properties($id);
     }
 
-    $oldID = $this->id;
-    $result = $this->GS->exec('/people/' . $oldID . '/identify/' . $id, array(), $params, $this);
+    $previous_id = $this->id;
+    $body = array(
+      'visitor_id' => $previous_id,
+      'person_id' => $id
+    );
+
+    if($props) $body['properties'] = $props;
+
+    $result = $this->GS->exec('/identify', array(), $body, $this);
     if ($result) $this->set_id($id);
     return $result;
   }
@@ -89,7 +81,12 @@ class GoSquaredPerson{
    * @return mixed              Decoded JSON response object, or false on failure.
    */
   function create_alias($id){
-    return $this->GS->exec('/people/' . $this->id . '/alias/' . $id, array(), array(), $this);
+    $previous_id = $this->id;
+    $body = array(
+      'visitor_id' => $previous_id,
+      'person_id' => $id
+    );
+    return $this->GS->exec('/alias', array(), $body, $this);
   }
 
   /**
@@ -98,8 +95,14 @@ class GoSquaredPerson{
    * @param  array  $params     Properties to be set on this person
    * @return mixed              Decoded JSON response object, or false on failure.
    */
-  function set_properties($params){
-    return $this->GS->exec('/people/' . $this->id . '/properties', array(), $params, $this);
+  function set_properties($props){
+    $body = array(
+      'person_id' => $this->id
+    );
+
+    if($props) $body['properties'] = $props;
+
+    return $this->GS->exec('/properties', array(), $body, $this);
   }
 
 }

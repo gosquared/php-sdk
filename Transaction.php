@@ -47,11 +47,14 @@ class GoSquaredTransaction{
    */
   function track(){
     $body = array();
-    $body['id'] = $this->id;
-    $body['items'] = $this->items;
-    $body['opts'] = $this->opts;
+    if (is_object($this->person)) $body['person_id'] = $this->person->id;
+    $transaction = array();
+    $transaction['id'] = $this->id;
+    $transaction['items'] = $this->items;
+    $transaction['opts'] = $this->opts;
+    $body['transaction'] = $transaction;
 
-    return $this->GS->exec('/transaction', array(), $body, $this->person);
+    return $this->GS->exec('/transaction', array(), $body);
   }
 }
 

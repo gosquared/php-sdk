@@ -1,13 +1,5 @@
 <?php
 
-/**
- * GoSquared PHP SDK.
- *
- * Created: Jan 2013
- * Modified: Oct 2014
- * Version: 1.0.0
- */
-
 require_once(__DIR__ . '/Person.php');
 require_once(__DIR__ . '/Transaction.php');
 
@@ -17,24 +9,35 @@ if(!defined('GOSQUARED_DEBUG')){
 if(!defined('GOSQUARED_CURL_TIMEOUT')){
   define('GOSQUARED_CURL_TIMEOUT', 10);
 }
+if(!defined('GOSQUARED_API_ENDPOINT')){
+  define('GOSQUARED_API_ENDPOINT', 'https://api.gosquared.com');
+}
 define('GOSQUARED_CURL', extension_loaded('curl'));
 
 class GoSquared{
   public $site_token;
+  public $api_key;
+  public $opts;
 
-  function __construct($opts){
-    if($opts && is_string($opts)) {
-      $opts = array(
-        'site_token' => $opts
-      );
+  function __construct($opts = false){
+    if (!$opts) $opts = array();
+
+    $err = false;
+    if(!isset($opts['site_token'])){
+      $this->debug('Site token is not specified', E_USER_WARNING);
+      $err = true;
     }
 
-    if(!$opts || !$opts['site_token'] || !is_string($opts['site_token'])){
-      $this->debug('Site token is not specified or invalid', E_USER_WARNING);
-      return false;
+    if(!isset($opts['api_key'])){
+      $this->debug('API key is not specified', E_USER_WARNING);
+      $err = true;
     }
+
+    if ($err) return false;
+
     $this->opts = $opts;
     $this->site_token = $opts['site_token'];
+    $this->api_key = $opts['api_key'];
   }
 
   function debug($message, $level = E_USER_NOTICE){
@@ -43,8 +46,11 @@ class GoSquared{
     trigger_error($message, $level);
   }
 
-  function exec($path, $params = array(), $body = false, $person = false){
-    $url = $this->generate_url($path, $params, $person ? $person->get_params() : false);
+  function exec($path, $params = array(), $body = false){
+    $params['site_token'] = $this->site_token;
+    $params['api_key'] = $this->api_key;
+
+    $url = $this->generate_url($path, $params);
 
     if(!GOSQUARED_CURL){
       $this->debug('cURL is required for the GoSquared SDK. See http://php.net/manual/en/book.curl.php for more info.');
@@ -55,12 +61,14 @@ class GoSquared{
     $this->debug('Requesting ' . $url, E_USER_NOTICE);
     curl_setopt($c, CURLOPT_URL, $url);
     curl_setopt($c, CURLOPT_RETURNTRANSFER, true);
+
     if($body){
       $body = json_encode($body);
       $this->debug($body, E_USER_NOTICE);
       curl_setopt($c, CURLOPT_POSTFIELDS, $body);
       curl_setopt($c, CURLOPT_HTTPHEADER, array('Content-type: application/json', 'Content-length: ' . strlen($body)));
     }
+
     curl_setopt($c, CURLOPT_TIMEOUT, GOSQUARED_CURL_TIMEOUT);
 
     $response = curl_exec($c);
@@ -72,20 +80,18 @@ class GoSquared{
       return false;
     }
 
+    if(GOSQUARED_DEBUG) $this->debug("Response:" . $response, E_USER_NOTICE);
     if(!$this->validate_response($response)) return false;
 
     return $response;
   }
 
-  function generate_url($route, $params = array(), $personParams = false){
-    $url = 'https://data.gosquared.com/' .
-      $this->site_token . '/v1' .
+  function generate_url($route, $params = array()){
+    $url = GOSQUARED_API_ENDPOINT . '/tracking/v1' .
       $route . '?' .
       http_build_query($params);
 
-    if ($personParams) $url .= http_build_query($personParams);
     return $url;
-
   }
 
   function validate_response($body){
@@ -101,19 +107,32 @@ class GoSquared{
    * Trigger an event
    * https://beta.gosquared.com/docs/tracking/api/#events
    * @param  string $name       Event name
-   * @param  array  $params     Any additional data to persist with the event
+   * @param  array  $data       Any additional data to persist with the event
+   * @param  object $person     Associate the event with Person if specified
    * @return mixed              Decoded JSON response object, or false on failure.
    */
-  function track_event($name, $params = array(), $person = false){
+  function track_event($name, $data = array(), $person = false){
     if(!$name || !is_string($name)){
       $this->debug('Events must have a name', E_USER_WARNING);
       return false;
     }
 
-    $query_params = array();
-    $query_params['name'] = $name;
+    $body = array(
+      'event' => array(
+        'name' => $name
+      )
+    );
 
-    return $this->exec('/event', $query_params, $params, $person);
+    if($data) $body['event']['data'] = $data;
+
+    if(is_object($person) && isset($person->id)) {
+      $body['person_id'] = $person->id;
+    } elseif($person) {
+      // in case of non-falsy, non-object value
+      $body['person_id'] = $person;
+    }
+
+    return $this->exec('/event', array(), $body);
   }
 
   /**

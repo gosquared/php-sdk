@@ -4,19 +4,17 @@
 /**
  * Super bare-bones test
  */
-error_reporting(E_ALL);
-define('GOSQUARED_DEBUG', true);
-define('SITE_TOKEN', getenv('SITE_TOKEN'));
+require(__DIR__ . '/setup.php');
 require(__DIR__ . '/../main.php');
 
 $GS = new GoSquared(array(
   'site_token' => SITE_TOKEN,
-  'tracking_key' => '12345'
+  'api_key'    => API_KEY
 ));
 
-$person = $GS->Person('PersonID');
+$person = $GS->Person('php-module-test');
 
-$result = $person->identify('newPersonID', array(
+$result = $person->identify(array(
   'name' => 'Test User',
   'email' => 'test@email.com'
 ));
@@ -25,7 +23,7 @@ if(!$result){
   $GS->debug("Identify failed", E_USER_WARNING);
 }
 
-$result = $person->create_alias('test@email.com');
+$result = $person->create_alias('php_module_test@gosquared.com');
 
 if(!$result){
   $GS->debug("Alias failed", E_USER_WARNING);

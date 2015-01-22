@@ -4,14 +4,12 @@
 /**
  * Super bare-bones test
  */
-error_reporting(E_ALL);
-define('GOSQUARED_DEBUG', true);
-define('SITE_TOKEN', getenv('SITE_TOKEN'));
+require(__DIR__ . '/setup.php');
 require(__DIR__ . '/../main.php');
 
 $GS = new GoSquared(array(
   'site_token' => SITE_TOKEN,
-  'tracking_key' => '12345'
+  'api_key'    => API_KEY
 ));
 
 $result = $GS->track_event('Test Event', array(
@@ -33,4 +31,5 @@ $result = $person->track_event('Test Event');
 if(!$result){
   $GS->debug("Event failed", E_USER_WARNING);
 }
+echo json_encode($result);
 ?>
