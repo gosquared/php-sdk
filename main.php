@@ -2,6 +2,9 @@
 
 require_once(__DIR__ . '/Person.php');
 require_once(__DIR__ . '/Transaction.php');
+require_once(__DIR__ . '/Now.php');
+require_once(__DIR__ . '/Trends.php');
+require_once(__DIR__ . '/Ecommerce.php');
 
 if(!defined('GOSQUARED_DEBUG')){
   define('GOSQUARED_DEBUG', false);
@@ -18,6 +21,10 @@ class GoSquared{
   public $site_token;
   public $api_key;
   public $opts;
+
+  public $now;
+  public $trends;
+  public $ecommerce;
 
   function __construct($opts = false){
     if (!$opts) $opts = array();
@@ -38,6 +45,10 @@ class GoSquared{
     $this->opts = $opts;
     $this->site_token = $opts['site_token'];
     $this->api_key = $opts['api_key'];
+
+    $this->now = new GoSquaredNow($this);
+    $this->trends = new GoSquaredTrends($this);
+    $this->ecommerce = new GoSquaredEcommerce($this);
   }
 
   function debug($message, $level = E_USER_NOTICE){
@@ -46,11 +57,11 @@ class GoSquared{
     trigger_error($message, $level);
   }
 
-  function exec($path, $params = array(), $body = false){
+  function exec($route, $params = array(), $body = false){
     $params['site_token'] = $this->site_token;
     $params['api_key'] = $this->api_key;
 
-    $url = $this->generate_url($path, $params);
+    $url = $this->generate_url($route, $params);
 
     if(!GOSQUARED_CURL){
       $this->debug('cURL is required for the GoSquared SDK. See http://php.net/manual/en/book.curl.php for more info.');
@@ -80,27 +91,20 @@ class GoSquared{
       return false;
     }
 
-    if(GOSQUARED_DEBUG) $this->debug("Response:" . $response, E_USER_NOTICE);
-    if(!$this->validate_response($response)) return false;
+    $this->debug("Response:" . $response, E_USER_NOTICE);
 
-    return $response;
+    return $this->parse_response($response);
   }
 
   function generate_url($route, $params = array()){
-    $url = GOSQUARED_API_ENDPOINT . '/tracking/v1' .
-      $route . '?' .
-      http_build_query($params);
-
-    return $url;
+    return GOSQUARED_API_ENDPOINT . $route . '?' . http_build_query($params);
   }
 
-  function validate_response($body){
+  function parse_response($body){
     if(!$body) return false;
     $decoded = json_decode($body);
     if(!$decoded) return false;
-
-    if(!isset($decoded->success) || !$decoded->success) return false;
-    return true;
+    return $decoded;
   }
 
   /**
@@ -132,7 +136,7 @@ class GoSquared{
       $body['person_id'] = $person;
     }
 
-    return $this->exec('/event', array(), $body);
+    return $this->exec('/tracking/v1/event', array(), $body);
   }
 
   /**

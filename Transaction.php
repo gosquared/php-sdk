@@ -54,7 +54,7 @@ class GoSquaredTransaction{
     $transaction['opts'] = $this->opts;
     $body['transaction'] = $transaction;
 
-    return $this->GS->exec('/transaction', array(), $body);
+    return $this->GS->exec('/tracking/v1/transaction', array(), $body);
   }
 }
 

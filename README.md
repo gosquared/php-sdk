@@ -7,18 +7,23 @@ Full documentation for this SDK can be found at https://beta.gosquared.com/docs/
 require_once('gosquared-php-sdk/main.php');
 
 $opts = array(
-  'site_token' => 'GSN-123456-A'
+  'site_token' => 'your-site-token',
+  'api_key' => 'your-api-key'
 );
 $GS = new GoSquared($opts);
+
+// Track events
 $result = $GS->track_event('Event Name');
-```
 
-Instantiate the class:
-```php
-$GS = new GoSquared($site_token);
-```
+// Retrieve live data
+$result = $GS->now->concurrents();
 
-Where `$site_token` is the token of a site registered with GoSquared (accessible from https://gosquared.com/integration/)
+// Retrieve historical data
+$result = $GS->trends->aggregate();
+
+// Retrieve Ecommerce data
+$result = $GS->ecommerce->transactions();
+```
 
 ## Requirements
 * PHP >= 5.2.0
@@ -28,8 +33,8 @@ Where `$site_token` is the token of a site registered with GoSquared (accessible
 ```bash
 make test
 ```
-	
-To test on a site, you can prefix this command with a SITE_TOKEN environment variable, which should be a valid token for a site registered with GoSquared. **WARNING: this will track test data under that site**
+
+To test with your own site token and api key, you can prefix this command with the SITE_TOKEN and API_KEY environment variables containing your keys. **WARNING: this will track test data under your account**
 
 ## Debugging
 To switch on debug logs, place the following define statement before including this library:
@@ -38,4 +43,4 @@ To switch on debug logs, place the following define statement before including t
 define('GOSQUARED_DEBUG', true);
 ```
 
-Debug output will then be sent to the standard ouput streams. Common places to find the output are your console (if run with CLI), or your web server's logs.
+Debug output will then be sent to the standard output streams. Common places to find the output are your console (if run with CLI), or your web server logs, or php-fpm logs.

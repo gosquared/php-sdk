@@ -69,7 +69,7 @@ class GoSquaredPerson{
 
     if($props) $body['properties'] = $props;
 
-    $result = $this->GS->exec('/identify', array(), $body, $this);
+    $result = $this->GS->exec('/tracking/v1/identify', array(), $body, $this);
     if ($result) $this->set_id($id);
     return $result;
   }
@@ -86,7 +86,7 @@ class GoSquaredPerson{
       'visitor_id' => $previous_id,
       'person_id' => $id
     );
-    return $this->GS->exec('/alias', array(), $body, $this);
+    return $this->GS->exec('/tracking/v1/alias', array(), $body, $this);
   }
 
   /**
@@ -102,7 +102,7 @@ class GoSquaredPerson{
 
     if($props) $body['properties'] = $props;
 
-    return $this->GS->exec('/properties', array(), $body, $this);
+    return $this->GS->exec('/tracking/v1/properties', array(), $body, $this);
   }
 
 }
