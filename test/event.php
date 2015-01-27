@@ -26,7 +26,7 @@ if(!$result){
   $GS->debug("Event failed", E_USER_WARNING);
 }
 
-$person = $GS->create_person(1);
+$person = $GS->create_person('php-module-test');
 $result = $person->track_event('Test Event');
 if(!$result){
   $GS->debug("Event failed", E_USER_WARNING);

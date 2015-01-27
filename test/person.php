@@ -15,24 +15,19 @@ $GS = new GoSquared(array(
 $person = $GS->Person('php-module-test');
 
 $result = $person->identify(array(
-  'name' => 'Test User',
-  'email' => 'test@email.com'
+  'name' => 'PHP SDK',
+  'email' => 'test-php@gosquared.com',
+  'props_set' => false
 ));
 
 if(!$result){
   $GS->debug("Identify failed", E_USER_WARNING);
 }
 
-$result = $person->create_alias('php_module_test@gosquared.com');
-
-if(!$result){
-  $GS->debug("Alias failed", E_USER_WARNING);
-}
-
 $result = $person->set_properties(array(
-  'name' => 'Test User',
-  'email' => 'test@email.com',
-  'phone' => '07901229693'
+  'name' => 'PHP SDK',
+  'email' => 'test-php@gosquared.com',
+  'props_set' => true
 ));
 
 if(!$result){
