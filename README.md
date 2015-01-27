@@ -1,6 +1,6 @@
 # GoSquared PHP SDK
 
-The official GoSquared PHP module for integrating the [GoSquared API](docs) into your PHP app with ease.
+The official GoSquared PHP module for integrating the [GoSquared API][docs] into your PHP app with ease.
 
 ## Usage
 
@@ -10,7 +10,7 @@ See the [Tracking API][tracking-docs] docs site for full documentation.
 
 ### Reporting API
 
-The reporting APIs and their functions are listed on [Reporting API](reporting-docs) docs site.
+The reporting APIs and their functions are listed on [Reporting API][reporting-docs] docs site.
 
 ## Quick guide
 ```php
@@ -65,4 +65,5 @@ define('GOSQUARED_DEBUG', true);
 Debug output will then be sent to the standard output streams. Common places to find the output are your console (if run with CLI), your web server logs, or php-fpm logs.
 
 [tracking-docs]: https://beta.gosquared.com/docs/tracking/api/
-[reportin-docs]: https://www.gosquared.com/developer/api/
+[reporting-docs]: https://www.gosquared.com/developer/api/
+[docs]: https://beta.gosquared.com/docs
