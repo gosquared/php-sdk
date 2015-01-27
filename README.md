@@ -1,8 +1,18 @@
 # GoSquared PHP SDK
 
-Full documentation for this SDK can be found at https://beta.gosquared.com/docs/tracking/api/.
+The official GoSquared PHP module for integrating the [GoSquared API](docs) into your PHP app with ease.
 
 ## Usage
+
+### Tracking API
+
+See the [Tracking API][tracking-docs] docs site for full documentation.
+
+### Reporting API
+
+The reporting APIs and their functions are listed on [Reporting API](reporting-docs) docs site.
+
+## Quick guide
 ```php
 require_once('gosquared-php-sdk/main.php');
 
@@ -14,6 +24,15 @@ $GS = new GoSquared($opts);
 
 // Track events
 $result = $GS->track_event('Event Name');
+
+// Create anonymous Person
+$person = $GS->create_person();
+
+// Identify person
+$response = $person->identify('user-id', array(
+  'name' => 'Foo Bar',
+  'email' => 'foo@bar.com'
+));
 
 // Retrieve live data
 $result = $GS->now->concurrents();
@@ -43,4 +62,7 @@ To switch on debug logs, place the following define statement before including t
 define('GOSQUARED_DEBUG', true);
 ```
 
-Debug output will then be sent to the standard output streams. Common places to find the output are your console (if run with CLI), or your web server logs, or php-fpm logs.
+Debug output will then be sent to the standard output streams. Common places to find the output are your console (if run with CLI), your web server logs, or php-fpm logs.
+
+[tracking-docs]: https://beta.gosquared.com/docs/tracking/api/
+[reportin-docs]: https://www.gosquared.com/developer/api/
