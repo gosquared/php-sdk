@@ -4,7 +4,7 @@
     "repositories": [
         {
             "type": "vcs",
-            "url": "https://github.com/gosquared/php-sdk"
+            "url": "https://github.com/thomas-dotworx/gosquared-php-sdk"
         }
     ],
 }
