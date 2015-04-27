@@ -7,6 +7,6 @@
         }
     ],
     "autoload": {
-        "psr-4": {"\\": "/"}
+        "files": ["main.php"]
     }
 }
