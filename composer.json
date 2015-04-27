@@ -1,0 +1,10 @@
+{
+    "name": "thomas-dotworx/php-sdk",
+    "version": "1.0.0",
+    "repositories": [
+        {
+            "type": "vcs",
+            "url": "https://github.com/gosquared/php-sdk"
+        }
+    ],
+}
