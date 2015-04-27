@@ -1,11 +1,6 @@
 {
     "name": "thomas-dotworx/gosquared-php-sdk",
-    "repositories": [
-        {
-            "type": "vcs",
-            "url": "https://github.com/thomas-dotworx/gosquared-php-sdk"
-        }
-    ],
+    "license": "MIT",
     "autoload": {
         "files": ["main.php"]
     }
