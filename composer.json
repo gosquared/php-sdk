@@ -6,5 +6,8 @@
             "type": "vcs",
             "url": "https://github.com/thomas-dotworx/gosquared-php-sdk"
         }
-    ]
+    ],
+    "autoload": {
+        "psr-4": {"\\": "/"}
+    }
 }
