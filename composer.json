@@ -1,6 +1,5 @@
 {
     "name": "thomas-dotworx/gosquared-php-sdk",
-    "version": "1.0.0",
     "repositories": [
         {
             "type": "vcs",
