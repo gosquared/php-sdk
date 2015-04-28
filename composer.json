@@ -1,0 +1,9 @@
+{
+    "name": "gosquared/php-sdk",
+    "homepage": "https://github.com/gosquared/php-sdk",
+    "keywords": ["customer","analytics","event","tracking"],
+    "license": "MIT",
+    "autoload": {
+        "files": ["main.php"]
+    }
+}
