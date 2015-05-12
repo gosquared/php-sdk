@@ -2,6 +2,10 @@
 
 The official GoSquared PHP module for integrating the [GoSquared API][docs] into your PHP app with ease.
 
+## Installation
+
+Available on [packagist](https://packagist.org/packages/gosquared/php-sdk)
+
 ## Usage
 
 ### Tracking API
