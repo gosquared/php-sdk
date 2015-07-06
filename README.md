@@ -68,6 +68,6 @@ define('GOSQUARED_DEBUG', true);
 
 Debug output will then be sent to the standard output streams. Common places to find the output are your console (if run with CLI), your web server logs, or php-fpm logs.
 
-[tracking-docs]: https://beta.gosquared.com/docs/tracking/api/
+[tracking-docs]: https://gosquared.com/docs/tracking/api/
 [reporting-docs]: https://www.gosquared.com/developer/api/
-[docs]: https://beta.gosquared.com/docs
+[docs]: https://gosquared.com/docs
