@@ -30,7 +30,7 @@ $GS = new GoSquared($opts);
 $result = $GS->track_event('Event Name');
 
 // Create anonymous Person
-$person = $GS->create_person();
+$person = $GS->create_person('user-id');
 
 // Identify person
 $response = $person->identify('user-id', array(
