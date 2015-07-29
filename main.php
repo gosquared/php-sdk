@@ -73,13 +73,18 @@ class GoSquared{
     curl_setopt($c, CURLOPT_URL, $url);
     curl_setopt($c, CURLOPT_RETURNTRANSFER, true);
 
+    $headers = array();
+    $headers[] = 'User-Agent: php-sdk/3.0.0';
+
     if($body){
       $body = json_encode($body);
       $this->debug($body, E_USER_NOTICE);
       curl_setopt($c, CURLOPT_POSTFIELDS, $body);
-      curl_setopt($c, CURLOPT_HTTPHEADER, array('Content-type: application/json', 'Content-length: ' . strlen($body)));
+      $headers[] = 'Content-Type: application/json';
+      $headers[] = 'Content-Length: ' . strlen($body);
     }
 
+    curl_setopt($c, CURLOPT_HTTPHEADER, $headers);
     curl_setopt($c, CURLOPT_TIMEOUT, GOSQUARED_CURL_TIMEOUT);
 
     $response = curl_exec($c);
