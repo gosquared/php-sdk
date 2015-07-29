@@ -60,7 +60,7 @@ class GoSquaredPerson{
   function identify($props = array()){
     $this->set_id($props);
 
-    if (!$this->id) {
+    if (!isset($this->id)) {
       $this->GS->debug('Missing ID and email', E_USER_WARNING);
       return false;
     }
