@@ -2,18 +2,18 @@
 
 /**
  * Track transactions
- * https://beta.gosquared.com/docs/tracking/api/#transactions
+ * https://www.gosquared.com/docs/tracking/api/#transactions
  */
 
 class GoSquaredTransaction{
   public $id;
 
-  function __construct($GS, $id, $opts = array(), $person = false){
+  function __construct($GS, $id, $opts = array(), $trackingData = array()){
     $this->GS = $GS;
     $this->id = $id;
     $this->items = array();
     $this->opts = $opts;
-    $this->person = $person;
+    $this->trackingData = $trackingData;
   }
 
   /**
@@ -46,13 +46,12 @@ class GoSquaredTransaction{
    * @return mixed              Decoded JSON response object, or false on failure.
    */
   function track(){
-    $body = array();
-    if (is_object($this->person)) $body['person_id'] = $this->person->id;
-    $transaction = array();
-    $transaction['id'] = $this->id;
-    $transaction['items'] = $this->items;
-    $transaction['opts'] = $this->opts;
-    $body['transaction'] = $transaction;
+    $body = $this->trackingData;
+    $body['transaction'] = array(
+      'id' => $this->id,
+      'items' => $this->items,
+      'opts' => $this->opts
+    );
 
     return $this->GS->exec('/tracking/v1/transaction', array(), $body);
   }

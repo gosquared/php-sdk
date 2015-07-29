@@ -12,12 +12,12 @@ $GS = new GoSquared(array(
   'api_key'    => API_KEY
 ));
 
-$person = $GS->Person('php-module-test');
+$person = $GS->Person();
 
 $result = $person->identify(array(
+  'id' => 1,
   'name' => 'PHP SDK',
   'email' => 'test-php@gosquared.com',
-  'props_set' => false
 ));
 
 if(!$result){
@@ -27,7 +27,6 @@ if(!$result){
 $result = $person->set_properties(array(
   'name' => 'PHP SDK',
   'email' => 'test-php@gosquared.com',
-  'props_set' => true
 ));
 
 if(!$result){
