@@ -19,6 +19,7 @@ if(!defined('GOSQUARED_API_ENDPOINT')){
 define('GOSQUARED_CURL', extension_loaded('curl'));
 
 class GoSquared{
+  public $version;
   public $site_token;
   public $api_key;
   public $opts;
@@ -41,6 +42,7 @@ class GoSquared{
       return false;
     }
 
+    $this->version = json_decode(file_get_contents(__DIR__ . '/composer.json'), true)['version'];
     $this->opts = $opts;
     $this->site_token = $opts['site_token'];
     $this->api_key = $opts['api_key'];
@@ -74,7 +76,7 @@ class GoSquared{
     curl_setopt($c, CURLOPT_RETURNTRANSFER, true);
 
     $headers = array();
-    $headers[] = 'User-Agent: php-sdk/3.0.0';
+    $headers[] = 'User-Agent: php-sdk/' . $this->version;
 
     if($body){
       $body = json_encode($body);
@@ -107,7 +109,7 @@ class GoSquared{
 
   function parse_response($body){
     if(!$body) return false;
-    $decoded = json_decode($body);
+    $decoded = json_decode($body, true);
     if(!$decoded) return false;
     return $decoded;
   }
