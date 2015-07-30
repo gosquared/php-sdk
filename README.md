@@ -33,7 +33,8 @@ $result = $GS->track_event('Event Name');
 $person = $GS->create_person();
 
 // Identify person
-$response = $person->identify('user-id', array(
+$response = $person->identify(array(
+  'id' => 'user-id',
   'name' => 'Foo Bar',
   'email' => 'foo@bar.com'
 ));

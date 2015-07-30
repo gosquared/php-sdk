@@ -5,6 +5,7 @@ require_once(__DIR__ . '/Transaction.php');
 require_once(__DIR__ . '/Now.php');
 require_once(__DIR__ . '/Trends.php');
 require_once(__DIR__ . '/Ecommerce.php');
+require_once(__DIR__ . '/Account.php');
 
 if(!defined('GOSQUARED_DEBUG')){
   define('GOSQUARED_DEBUG', false);
@@ -18,6 +19,7 @@ if(!defined('GOSQUARED_API_ENDPOINT')){
 define('GOSQUARED_CURL', extension_loaded('curl'));
 
 class GoSquared{
+  public $version;
   public $site_token;
   public $api_key;
   public $opts;
@@ -25,23 +27,22 @@ class GoSquared{
   public $now;
   public $trends;
   public $ecommerce;
+  public $account;
 
   function __construct($opts = false){
     if (!$opts) $opts = array();
 
-    $err = false;
     if(!isset($opts['site_token'])){
       $this->debug('Site token is not specified', E_USER_WARNING);
-      $err = true;
+      return false;
     }
 
     if(!isset($opts['api_key'])){
       $this->debug('API key is not specified', E_USER_WARNING);
-      $err = true;
+      return false;
     }
 
-    if ($err) return false;
-
+    $this->version = json_decode(file_get_contents(__DIR__ . '/composer.json'), true)['version'];
     $this->opts = $opts;
     $this->site_token = $opts['site_token'];
     $this->api_key = $opts['api_key'];
@@ -49,6 +50,7 @@ class GoSquared{
     $this->now = new GoSquaredNow($this);
     $this->trends = new GoSquaredTrends($this);
     $this->ecommerce = new GoSquaredEcommerce($this);
+    $this->account = new GoSquaredAccount($this);
   }
 
   function debug($message, $level = E_USER_NOTICE){
@@ -73,13 +75,18 @@ class GoSquared{
     curl_setopt($c, CURLOPT_URL, $url);
     curl_setopt($c, CURLOPT_RETURNTRANSFER, true);
 
+    $headers = array();
+    $headers[] = 'User-Agent: php-sdk/' . $this->version;
+
     if($body){
       $body = json_encode($body);
       $this->debug($body, E_USER_NOTICE);
       curl_setopt($c, CURLOPT_POSTFIELDS, $body);
-      curl_setopt($c, CURLOPT_HTTPHEADER, array('Content-type: application/json', 'Content-length: ' . strlen($body)));
+      $headers[] = 'Content-Type: application/json';
+      $headers[] = 'Content-Length: ' . strlen($body);
     }
 
+    curl_setopt($c, CURLOPT_HTTPHEADER, $headers);
     curl_setopt($c, CURLOPT_TIMEOUT, GOSQUARED_CURL_TIMEOUT);
 
     $response = curl_exec($c);
@@ -102,46 +109,37 @@ class GoSquared{
 
   function parse_response($body){
     if(!$body) return false;
-    $decoded = json_decode($body);
+    $decoded = json_decode($body, true);
     if(!$decoded) return false;
     return $decoded;
   }
 
   /**
    * Trigger an event
-   * https://beta.gosquared.com/docs/tracking/api/#events
+   * https://www.gosquared.com/docs/tracking/api/#events
    * @param  string $name       Event name
    * @param  array  $data       Any additional data to persist with the event
    * @param  object $person     Associate the event with Person if specified
    * @return mixed              Decoded JSON response object, or false on failure.
    */
-  function track_event($name, $data = array(), $person = false){
+  function track_event($name, $data = array(), $trackingData = array()){
     if(!$name || !is_string($name)){
       $this->debug('Events must have a name', E_USER_WARNING);
       return false;
     }
 
-    $body = array(
-      'event' => array(
-        'name' => $name
-      )
+    $body = $trackingData;
+    $body['event'] = array(
+      'name' => $name,
+      'data' => $data
     );
-
-    if($data) $body['event']['data'] = $data;
-
-    if(is_object($person) && isset($person->id)) {
-      $body['person_id'] = $person->id;
-    } elseif($person) {
-      // in case of non-falsy, non-object value
-      $body['person_id'] = $person;
-    }
 
     return $this->exec('/tracking/v1/event', array(), $body);
   }
 
   /**
    * Create a new Person class
-   * https://beta.gosquared.com/docs/tracking/api/#identify
+   * https://www.gosquared.com/docs/tracking/api/#identify
    * @param  string $id         Person ID
    * @return Person             GoSquaredPerson class
    */
@@ -154,16 +152,16 @@ class GoSquared{
 
   /**
    * Create a new Transaction class
-   * https://beta.gosquared.com/docs/tracking/api/#transactions
+   * https://www.gosquared.com/docs/tracking/api/#transactions
    * @param  string $id         Unique transaction ID
    * @param  array  $opts       Custom options for this transaction
    * @return Transaction        GoSquaredTransaction class
    */
-  function create_transaction($id, $opts = array()){
-    return new GoSquaredTransaction($this, $id, $opts);
+  function create_transaction($id, $opts = array(), $trackingData = array()){
+    return new GoSquaredTransaction($this, $id, $opts, $trackingData);
   }
-  function Transaction($id, $opts = array()) {
-    return $this->create_transaction($id, $opts);
+  function Transaction($id, $opts = array(), $trackingData = array()) {
+    return $this->create_transaction($id, $opts, $trackingData);
   }
 }
 

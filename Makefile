@@ -3,7 +3,7 @@ API_KEY ?= demo
 
 test: test-tracking test-reporting
 test-tracking: test-event test-person test-transaction
-test-reporting: test-now test-trends test-ecommerce
+test-reporting: test-now test-trends test-ecommerce test-account
 
 test-event:
 	SITE_TOKEN=$(SITE_TOKEN) API_KEY=$(API_KEY) test/event.php
@@ -22,5 +22,8 @@ test-trends:
 
 test-ecommerce:
 	SITE_TOKEN=$(SITE_TOKEN) API_KEY=$(API_KEY) test/ecommerce.php
+
+test-account:
+	SITE_TOKEN=$(SITE_TOKEN) API_KEY=$(API_KEY) test/account.php
 
 .PHONY: test
