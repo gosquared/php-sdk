@@ -143,10 +143,10 @@ class GoSquared{
    * @param  string $id         Person ID
    * @return Person             GoSquaredPerson class
    */
-  function create_person($id){
+  function create_person($id = false){
     return new GoSquaredPerson($this, $id);
   }
-  function Person($id) {
+  function Person($id = false) {
     return $this->create_person($id);
   }
 
