@@ -129,10 +129,11 @@ class GoSquared{
     }
 
     $body = $trackingData;
-    $body['event'] = array(
-      'name' => $name,
-      'data' => $data
-    );
+
+    $body['event'] = array( 'name' => $name );
+    if ($data) {
+      $body['event']['data'] = $data;
+    }
 
     return $this->exec('/tracking/v1/event', array(), $body);
   }
