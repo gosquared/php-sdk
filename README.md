@@ -42,11 +42,9 @@ $response = $person->identify(array(
 // Retrieve live data
 $result = $GS->now->concurrents();
 
-// Retrieve historical data
+// Retrieve historical trends and ecommerce data
 $result = $GS->trends->aggregate();
 
-// Retrieve Ecommerce data
-$result = $GS->ecommerce->transactions();
 ```
 
 ## Requirements
